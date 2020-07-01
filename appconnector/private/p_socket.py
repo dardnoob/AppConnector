@@ -40,15 +40,12 @@ class Socket(QtNetwork.QTcpSocket):
 
         if size:
             logger.debug("buffer remove begin " + str(size) + " from " + repr(self._buffer_data.size()))
+            self._buffer_stream.device().seek(0)
             replace_raw_data = self._buffer_stream.readRawData(self._buffer_data.size())
             replace_data = QtCore.QByteArray.fromRawData(replace_raw_data)
 
             replace_stream = QtCore.QDataStream(replace_data)
             replace_stream.skipRawData(size)
-            print(self._buffer_data.size()) # non zero
-            print(replace_data.size()) # non zero
-            print(replace_stream.device().size()) # zero
-            print(replace_stream.device().bytesAvailable())
 
             self._buffer_data.clear()
             self._buffer_stream.device().reset()
@@ -88,7 +85,6 @@ class Socket(QtNetwork.QTcpSocket):
         while True:
             # get message size and reset message stream
             if not self._message_size:
-                print("aval: " + str(self._buffer_stream.device().bytesAvailable()) + " size: " + str(self._buffer_stream.device().size()))
                 if self._buffer_stream.device().bytesAvailable():
                     if self._buffer_stream.device().bytesAvailable() < ctypes.sizeof(ctypes.c_uint64):
                         logger.debug("header data is too small for receiving from buffer, waiting for the next message")
