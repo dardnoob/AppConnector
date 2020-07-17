@@ -142,7 +142,7 @@ class Client(QtCore.QObject):
 
         is_local = self.port < 1
         if self._socket is not None:
-            self._socket.abort()
+            self._socket.close()
 
         if is_local:
             self._socket = LocalSocket()
@@ -191,6 +191,12 @@ class Client(QtCore.QObject):
             self._thread.wait(10000)
             self._thread.quit()
             self._thread.wait(10000)
+
+            if self._thread.isRunning():
+                self._thread.terminate()
+
+            self._thread.deleteLater()
+            self._socket.close()
 
             self._thread = None
             self._socket = None
