@@ -1,13 +1,9 @@
+import six
 from ..qt import QtCore, QtNetwork
 from .p_socket import Socket
 
 
-class LocalSocket(QtNetwork.QLocalSocket, metaclass=Socket):
+@six.add_metaclass(Socket)
+class LocalSocket(QtNetwork.QLocalSocket):
 
-    def __init__(self, *args, **kwargs):
-
-        """
-        initialise socket object
-        """
-
-        QtNetwork.QLocalSocket.__init__(self, *args, **kwargs)
+    pass

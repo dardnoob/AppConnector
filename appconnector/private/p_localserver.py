@@ -1,13 +1,9 @@
+import six
 from ..qt import QtNetwork, QtCore
 from .p_server import Server
 
 
-class LocalServer(QtNetwork.QLocalServer, metaclass=Server):
+@six.add_metaclass(Server)
+class LocalServer(QtNetwork.QLocalServer):
 
-    def __init__(self, *args, **kwargs):
-
-        """
-        initialise server
-        """
-
-        QtNetwork.QLocalServer.__init__(self, *args, **kwargs)
+    pass
