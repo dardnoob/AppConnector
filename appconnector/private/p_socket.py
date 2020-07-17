@@ -72,11 +72,12 @@ class Socket(type(QtCore.QObject)):
         close connection
         """
 
-        if isinstance(obj, QtNetwork.QLocalSocket):
-            obj.disconnectFromServer()
+        if obj.state() != QtNetwork.QAbstractSocket.UnconnectedState:
+            if isinstance(obj, QtNetwork.QLocalSocket) and obj.state() != QtNetwork.QAbstractSocket.ClosingState:
+                super(obj.__class__, obj).disconnectFromServer()
 
-        else:
-            super(obj.__class__, obj).close()
+            else:
+                super(obj.__class__, obj).close()
 
     @staticmethod
     def _buffer_remove(obj, size):
