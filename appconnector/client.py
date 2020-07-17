@@ -52,15 +52,23 @@ class Client(QtCore.QObject):
             logger.warning("no client socket found")
 
         self.errorOccurred.emit(error)
-        self._attempt_timer.start(3000)
+        self.disconnected_slot()
+
+    def disconnected_slot(self):
+
+        """
+        disconnected slot
+        """
+
+        self.disconnected.emit()
+        if self.keep_alive and not self._manual_close:
+            self._attempt_timer.start(3000)
 
     def check_connection(self):
 
         """
         check connection
         """
-
-        self.disconnected.emit()
 
         if self.keep_alive and not self._manual_close:
             logger.debug("restore connection")
@@ -136,16 +144,15 @@ class Client(QtCore.QObject):
         if self._socket is not None:
             self._socket.abort()
 
-        else:
-            if is_local:
-                self._socket = LocalSocket()
+        if is_local:
+            self._socket = LocalSocket()
 
-            else:
-                self._socket = TcpSocket()
+        else:
+            self._socket = TcpSocket()
 
         self._socket.received.connect(self.received)
         self._socket.sent.connect(self.sent)
-        self._socket.disconnected.connect(self.check_connection)
+        self._socket.disconnected.connect(self.disconnected_slot)
         self._socket.connected.connect(self.connected.emit)
         if __qt_version_info__ < (5, 15):
             self._socket.error.connect(self.error_occurred_slot)
@@ -181,9 +188,9 @@ class Client(QtCore.QObject):
             self._thread.sending.disconnect()
 
             self._thread.close()
-            self._thread.wait(60)
+            self._thread.wait(10000)
             self._thread.quit()
-            self._thread.wait(60)
+            self._thread.wait(10000)
 
             self._thread = None
             self._socket = None
