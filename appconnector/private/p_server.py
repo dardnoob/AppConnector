@@ -34,8 +34,19 @@ class Server(type(QtCore.QObject)):
         attrs["broadcast"] = Server.broadcast
         attrs["__iter__"] = Server.__iter_override__
         attrs["__getitem__"] = Server.__getitem_override__
+        if "setup" not in attrs:
+            attrs["setup"] = Server.setup
 
         return super(Server, cls).__new__(cls, name, bases, attrs)
+
+    @staticmethod
+    def setup(obj):
+
+        """
+        setup
+        """
+
+        pass
 
     @staticmethod
     def __init_override__(obj, *args, **kwargs):
@@ -48,6 +59,8 @@ class Server(type(QtCore.QObject)):
         super(obj.__class__, obj).__init__(*args, **kwargs)
 
         obj._client_map = {}
+
+        obj.setup()
 
     @staticmethod
     def incomingConnection(obj, descriptor):

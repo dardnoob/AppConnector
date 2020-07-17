@@ -7,3 +7,5 @@ from .p_server import Server
 class LocalServer(QtNetwork.QLocalServer):
 
     pass
+    # 'incomingConnection' not implemented on python 2.7 with PySide 1.24
+

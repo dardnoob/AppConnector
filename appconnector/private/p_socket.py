@@ -23,8 +23,18 @@ class Socket(type(QtCore.QObject)):
         attrs["send"] = Socket.send
         attrs["open"] = Socket.open
         attrs["close"] = Socket.close
+        attrs["setup"] = Socket.setup
 
         return super(Socket, cls).__new__(cls, name, bases, attrs)
+
+    @staticmethod
+    def setup(obj):
+
+        """
+        setup
+        """
+
+        pass
 
     @staticmethod
     def __init_override__(obj, *args, **kwargs):
@@ -48,6 +58,9 @@ class Socket(type(QtCore.QObject)):
         obj._buffer_stream.setVersion(QtCore.QDataStream.Qt_4_7)
 
         obj.readyRead.connect(obj.recv)
+
+        obj._close = False
+        obj.setup()
 
     @staticmethod
     def open(obj, host, port):
@@ -74,7 +87,13 @@ class Socket(type(QtCore.QObject)):
 
         if obj.state() != QtNetwork.QAbstractSocket.UnconnectedState:
             if isinstance(obj, QtNetwork.QLocalSocket) and obj.state() != QtNetwork.QAbstractSocket.ClosingState:
-                super(obj.__class__, obj).disconnectFromServer()
+                if not obj._close:
+                    obj._close = True
+                    super(obj.__class__, obj).disconnectFromServer()
+
+                else:
+                    obj._close = False
+                    super(obj.__class__, obj).close()
 
             else:
                 super(obj.__class__, obj).close()
