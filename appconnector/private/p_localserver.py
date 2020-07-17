@@ -2,7 +2,7 @@ from ..qt import QtNetwork, QtCore
 from .p_server import Server
 
 
-class TcpServer(QtNetwork.QTcpServer, metaclass=Server):
+class LocalServer(QtNetwork.QLocalServer, metaclass=Server):
 
     def __init__(self, *args, **kwargs):
 
@@ -10,4 +10,4 @@ class TcpServer(QtNetwork.QTcpServer, metaclass=Server):
         initialise server
         """
 
-        QtNetwork.QTcpServer.__init__(self, *args, **kwargs)
+        QtNetwork.QLocalServer.__init__(self, *args, **kwargs)
