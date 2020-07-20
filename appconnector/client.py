@@ -188,9 +188,9 @@ class Client(QtCore.QObject):
             self._thread.sending.disconnect()
 
             self._thread.close()
-            self._thread.wait(10000)
+            self._thread.wait(100)
             self._thread.quit()
-            self._thread.wait(10000)
+            self._thread.wait(100)
 
             if self._thread.isRunning():
                 self._thread.terminate()

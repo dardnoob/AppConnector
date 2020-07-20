@@ -133,9 +133,9 @@ class Connection(QtCore.QObject):
             self._thread.sending.disconnect()
 
             self._thread.close()
-            self._thread.wait(10000)
+            self._thread.wait(100)
             self._thread.quit()
-            self._thread.wait(10000)
+            self._thread.wait(100)
 
             self._thread = None
             self._socket = None
